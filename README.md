@@ -1,87 +1,155 @@
-# Welcome to React Router!
 
-A modern, production-ready template for building full-stack React applications using React Router.
+<h1 style="font-size:2.25rem; font-weight:700; text-center;">AI-Powered Application Tracking System</h1>
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+<img src="./public/images/HomePage.png" alt="Home Page">
 
-## Features
+# AI-Powered Application Tracking System
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
-
-## Getting Started
-
-### Installation
-
-Install the dependencies:
-
-```bash
-npm install
-```
-
-### Development
-
-Start the development server with HMR:
-
-```bash
-npm run dev
-```
-
-Your application will be available at `http://localhost:5173`.
-
-## Building for Production
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
-
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+Live Demo: [https://ai-powered-application-tracking-system.onrender.com/](https://ai-powered-application-tracking-system.onrender.com/)
+*Deployed using **Render***
 
 ---
 
-Built with ❤️ using React Router.
+## 🚀 Project Overview
+
+AI-Powered Application Tracking System is a modern web application built using React + TypeScript, designed to simplify how users track and manage job applications.
+The UI is enhanced with smooth animations, clean design, and a fast development environment powered by the latest tools and libraries.
+
+---
+
+## 🧩 Key Features
+
+* Responsive, modern UI with **React** + **Tailwind CSS**
+* Smooth page and component animations using **GSAP**
+* Global state management with **Zustand**
+* Routing and navigation powered by **React Router v7**
+* Fully typed with **TypeScript**
+* Lightning-fast builds and dev server using **Vite**
+* Clean and structured code for long-term scalability
+* Hosted and deployed via **Render**
+
+---
+
+## 🛠️ Getting Started (Local Development)
+
+### 1. Clone the repository
+
+```
+git clone https://github.com/yashuyouwaraj/AI-Powered-Application-Tracking-System.git
+cd AI-Powered-Application-Tracking-System
+```
+
+### 2. Install dependencies
+
+```
+npm install
+```
+
+### 3. Start development server
+
+```
+npm run dev
+```
+
+Default Vite URL:
+`http://localhost:5173`
+
+### 4. Build for production
+
+```
+npm run build
+```
+
+### 5. Start production server (SSR build if used)
+
+```
+npm start
+```
+
+---
+
+## 📦 Project Structure
+
+```
+/app                      → Main application components, routes, and pages
+/constants                → Shared constants and configuration
+/public                   → Static assets (icons, images, etc.)
+/types                    → TypeScript types and interfaces
+react-router.config.ts    → React Router route definitions
+vite.config.ts            → Vite configuration with Tailwind, Router, TS paths plugins
+package.json
+tsconfig.json
+README.md
+```
+
+---
+
+## 🌐 Deployment
+
+This project is deployed using **Render**.
+Render automatically builds and serves both client and server bundles (React Router SSR).
+
+Live App:
+[https://ai-powered-application-tracking-system.onrender.com/](https://ai-powered-application-tracking-system.onrender.com/)
+
+---
+
+## ✅ Technologies Used
+
+* **React 19**
+* **TypeScript**
+* **Vite**
+* **Tailwind CSS**
+* **GSAP (GreenSock)**
+* **Zustand**
+* **React Router v7**
+* **Puter.js**
+* **Node.js + React Router Server** (for SSR if configured)
+* **Render** (Hosting & Deployment)
+* **Git + GitHub** (Version Control)
+
+---
+
+## 🔍 Future Enhancements
+
+<img src="./public/images/AUTH.png" alt="Auth Page">
+<img src="./public/images/UploadPage.png" alt="Upload Page">
+
+* User authentication & profile system
+* Export job application data to CSV/PDF
+* AI-based application success prediction
+* Improved analytics dashboard
+* Mobile-first UI refinements
+* Automated tests (Jest, React Testing Library)
+* CI/CD (GitHub Actions)
+
+---
+
+## 🤝 Contributing
+
+Contributions are always welcome!
+
+Steps:
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/NewFeature`)
+3. Commit changes (`git commit -m "Add NewFeature"`)
+4. Push branch (`git push origin feature/NewFeature`)
+5. Open a pull request
+
+---
+
+## 📄 License
+
+MIT License
+© 2025 Yashu Youwaraj
+
+---
+
+## ✉️ Contact
+
+For questions, suggestions, or issues, feel free to open an issue on GitHub.
+
+---
+
+If you want screenshots, badges, or a more stylish README.md version, I can generate that too!
