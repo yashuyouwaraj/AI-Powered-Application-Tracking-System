@@ -124,11 +124,6 @@ const Upload = () => {
             return;
         }
 
-        if(!companyName || !jobTitle || !jobDescription) {
-            setError('Please fill in all fields');
-            return;
-        }
-
         handleAnalyze({ companyName, jobTitle, jobDescription, file });
     }
 
@@ -187,16 +182,16 @@ const Upload = () => {
 
                             <form id="upload-form" onSubmit={handleSubmit} className="flex flex-col gap-4 mt-8">
                                 <div className="form-div">
-                                    <label htmlFor="company-name">Company Name <span className="text-red-500">*</span></label>
-                                    <input type="text" name="company-name" placeholder="e.g., Google, Microsoft" id="company-name" required />
+                                    <label htmlFor="company-name">Company Name <span className="text-gray-400 text-sm">(optional)</span></label>
+                                    <input type="text" name="company-name" placeholder="e.g., Google, Microsoft" id="company-name" />
                                 </div>
                                 <div className="form-div">
-                                    <label htmlFor="job-title">Job Title <span className="text-red-500">*</span></label>
-                                    <input type="text" name="job-title" placeholder="e.g., Senior Software Engineer" id="job-title" required />
+                                    <label htmlFor="job-title">Job Title <span className="text-gray-400 text-sm">(optional)</span></label>
+                                    <input type="text" name="job-title" placeholder="e.g., Senior Software Engineer" id="job-title" />
                                 </div>
                                 <div className="form-div">
-                                    <label htmlFor="job-description">Job Description <span className="text-red-500">*</span></label>
-                                    <textarea rows={5} name="job-description" placeholder="Paste the job description here..." id="job-description" required />
+                                    <label htmlFor="job-description">Job Description <span className="text-gray-400 text-sm">(optional)</span></label>
+                                    <textarea rows={5} name="job-description" placeholder="Paste the job description here..." id="job-description" />
                                 </div>
 
                                 <div className="form-div">

@@ -27,45 +27,48 @@ const FileUploader = ({ onFileSelect }: FileUploaderProps) => {
 
 
     return (
-        <div className="w-full gradient-border">
-            <div {...getRootProps()}>
-                <input {...getInputProps()} />
+        <div {...getRootProps()} className="w-full">
+            <input {...getInputProps()} />
 
-                <div className="space-y-4 cursor-pointer">
-                    {file ? (
-                        <div className="uploader-selected-file" onClick={(e) => e.stopPropagation()}>
-                            <img src="/images/pdf.png" alt="pdf" className="size-10" />
-                            <div className="flex items-center space-x-3">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-700 truncate max-w-xs">
-                                        {file.name}
-                                    </p>
-                                    <p className="text-sm text-gray-500">
-                                        {formatSize(file.size)}
-                                    </p>
-                                </div>
-                            </div>
-                            <button className="p-2 cursor-pointer" onClick={(e) => {
-                                onFileSelect?.(null)
-                            }}>
-                                <img src="/icons/cross.svg" alt="remove" className="w-4 h-4" />
-                            </button>
-                        </div>
-                    ): (
+            {file ? (
+                <div className="uploader-selected-file" onClick={(e) => e.stopPropagation()}>
+                    <img src="/images/pdf.png" alt="pdf" className="size-10" />
+                    <div className="flex items-center space-x-3">
                         <div>
-                            <div className="mx-auto w-16 h-16 flex items-center justify-center mb-2">
-                                <img src="/icons/info.svg" alt="upload" className="size-20" />
-                            </div>
-                            <p className="text-lg text-gray-500">
-                                <span className="font-semibold">
-                                    Click to upload
-                                </span> or drag and drop
+                            <p className="text-sm font-medium text-gray-700 truncate max-w-xs">
+                                {file.name}
                             </p>
-                            <p className="text-lg text-gray-500">PDF (max {formatSize(maxFileSize)})</p>
+                            <p className="text-sm text-gray-500">
+                                {formatSize(file.size)}
+                            </p>
                         </div>
-                    )}
+                    </div>
+                    <button className="p-2 cursor-pointer" onClick={(e) => {
+                        onFileSelect?.(null)
+                    }}>
+                        <img src="/icons/cross.svg" alt="remove" className="w-4 h-4" />
+                    </button>
                 </div>
-            </div>
+            ) : (
+                <div className="w-full px-6 py-8 border-2 border-dashed border-indigo-300 rounded-lg hover:border-indigo-500 hover:bg-indigo-50/50 transition-all cursor-pointer bg-white/50 backdrop-blur-sm">
+                    <div className="flex flex-col items-center justify-center space-y-3">
+                        <div className="flex items-center justify-center w-14 h-14 rounded-lg bg-indigo-100">
+                            <span className="text-2xl">📤</span>
+                        </div>
+                        <div className="text-center">
+                            <p className="text-base font-semibold text-gray-800">
+                                Upload Resume
+                            </p>
+                            <p className="text-sm text-gray-500 mt-1">
+                                Click to browse or drag and drop
+                            </p>
+                            <p className="text-xs text-gray-400 mt-2">
+                                PDF files only (max {formatSize(maxFileSize)})
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
