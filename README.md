@@ -1,6 +1,4 @@
 
-<h1 style="font-size:2.25rem; font-weight:700; text-center;">AI-Powered Application Tracking System</h1>
-
 <img src="./public/images/HomePage.png" alt="Home Page">
 
 # AI-Powered Application Tracking System
