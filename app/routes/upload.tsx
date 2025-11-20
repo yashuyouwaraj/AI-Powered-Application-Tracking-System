@@ -41,18 +41,33 @@ const Upload = () => {
         try {
             setCurrentStep('uploading-file');
             setStatusText('Uploading the file...');
-            const uploadedFile = await fs.upload([file]);
-            if(!uploadedFile) throw new Error('Failed to upload file');
+            const uploadedFileResult = await fs.upload([file]);
+            
+            // Handle both single FSItem and array responses
+            const uploadedFile = Array.isArray(uploadedFileResult) ? uploadedFileResult[0] : uploadedFileResult;
+            if(!uploadedFile || !uploadedFile.path) {
+              console.error('Upload result:', uploadedFileResult);
+              throw new Error('Failed to upload file - no path in response');
+            }
+            console.log('✅ PDF uploaded to:', uploadedFile.path);
 
             setCurrentStep('converting-image');
             setStatusText('Converting PDF to image...');
             const imageFile = await convertPdfToImage(file);
             if(!imageFile.file) throw new Error('Failed to convert PDF to image');
+            console.log('✅ Image conversion successful, file size:', imageFile.file.size, 'bytes');
 
             setCurrentStep('uploading-image');
             setStatusText('Uploading image preview...');
-            const uploadedImage = await fs.upload([imageFile.file]);
-            if(!uploadedImage) throw new Error('Failed to upload image');
+            const uploadedImageResult = await fs.upload([imageFile.file]);
+            
+            // Handle both single FSItem and array responses
+            const uploadedImage = Array.isArray(uploadedImageResult) ? uploadedImageResult[0] : uploadedImageResult;
+            if(!uploadedImage || !uploadedImage.path) {
+              console.error('Image upload result:', uploadedImageResult);
+              throw new Error('Failed to upload image - no path in response');
+            }
+            console.log('✅ Image uploaded to:', uploadedImage.path);
 
             setCurrentStep('preparing-data');
             setStatusText('Preparing data...');

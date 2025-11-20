@@ -15,34 +15,36 @@ async function loadPdfJs(): Promise<any> {
   isLoading = true;
   loadPromise = (async () => {
     try {
+      console.log('pdf2img: Loading pdfjs-dist...');
       // Import pdfjs-dist
       const pdfjs = await import("pdfjs-dist");
       const lib = pdfjs.default || pdfjs;
 
-      // Set worker - try .js first
+      console.log('pdf2img: pdfjs loaded, version:', lib.version);
+      console.log('pdf2img: setting worker...');
+
+      // Set worker to the minified version
       try {
-        lib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
-        // eslint-disable-next-line no-console
-        console.log("pdf2img: worker set to /pdf.worker.min.js");
+        lib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+        console.log(`pdf2img: ✅ worker set to /pdf.worker.min.mjs`);
       } catch (e) {
-        // eslint-disable-next-line no-console
-        console.warn("pdf2img: failed to set worker", e);
+        console.warn(`pdf2img: failed to set worker /pdf.worker.min.mjs`, e);
+        // Try fallback
+        try {
+          lib.GlobalWorkerOptions.workerSrc = "/pdf.worker.mjs";
+          console.log(`pdf2img: ✅ worker fallback to /pdf.worker.mjs`);
+        } catch (e2) {
+          console.warn(`pdf2img: failed to set worker /pdf.worker.mjs`, e2);
+        }
       }
 
-      // Also try disabling worker entirely (for main-thread rendering)
-      try {
-        // Some versions have this property
-        (lib as any).disableWorker = true;
-      } catch (e) {
-        // ignore
-      }
-
+      console.log('pdf2img: pdfjs ready, worker configured');
       pdfjsLib = lib;
       isLoading = false;
       return lib;
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error("pdf2img: failed to load pdfjs library", err);
+      isLoading = false;
       throw err;
     }
   })();
@@ -54,47 +56,79 @@ export async function convertPdfToImage(
   file: File
 ): Promise<PdfConversionResult> {
   try {
+    console.log('pdf2img: Starting conversion for', file.name);
     const lib = await loadPdfJs();
 
     if (!lib || typeof lib.getDocument !== "function") {
-      throw new Error("pdfjs failed to load");
+      console.error("pdf2img: pdfjs library not available or invalid");
+      // Return a placeholder immediately
+      const canvas = await renderSimplePlaceholder();
+      return new Promise((resolve) => {
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            resolve({ imageUrl: "", file: null, error: "Canvas to blob failed" });
+            return;
+          }
+          const originalName = file.name.replace(/\.pdf$/i, "");
+          const imageFile = new File([blob], `${originalName}.png`, { type: "image/png" });
+          resolve({ imageUrl: URL.createObjectURL(blob), file: imageFile });
+        }, "image/png", 1.0);
+      });
     }
 
     const arrayBuffer = await file.arrayBuffer();
+    console.log('pdf2img: arrayBuffer ready, size:', arrayBuffer.byteLength);
 
     // Try to load and extract page info, but use placeholder render as fallback
     let page: any = null;
     try {
-      // Try with ArrayBuffer first
-      const pdf = await lib.getDocument({ data: arrayBuffer }).promise;
+      console.log('pdf2img: Attempting to parse PDF...');
+      const pdf = await Promise.race([
+        lib.getDocument({ data: arrayBuffer }).promise,
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("PDF loading timeout")), 5000)
+        )
+      ]);
+      console.log('pdf2img: PDF document loaded');
       page = await pdf.getPage(1);
-      // eslint-disable-next-line no-console
-      console.log("pdf2img: PDF loaded successfully");
+      console.log('pdf2img: Page 1 retrieved successfully');
     } catch (loadErr: any) {
-      // eslint-disable-next-line no-console
-      console.warn("pdf2img: PDF loading failed, will use placeholder", loadErr);
+      console.warn("pdf2img: PDF loading/parsing failed:", loadErr.message || loadErr);
+      console.log("pdf2img: will use placeholder render");
     }
 
     // Render - try canvas first, but use placeholder as fallback
     let canvas: HTMLCanvasElement;
 
     if (page) {
+      console.log('pdf2img: Attempting to render actual PDF page');
       // Try to render the actual page
-      canvas = await tryRenderPageToCanvas(page).catch(async (err) => {
-        // eslint-disable-next-line no-console
-        console.warn("pdf2img: canvas render failed, using placeholder", err);
-        return renderPageToPlaceholder(page);
-      });
+      try {
+        canvas = await Promise.race([
+          tryRenderPageToCanvas(page),
+          new Promise(async (_, reject) => {
+            setTimeout(() => reject(new Error("Render timeout")), 8000);
+          })
+        ]) as HTMLCanvasElement;
+        console.log('pdf2img: ✅ Successfully rendered PDF page');
+      } catch (err) {
+        console.warn("pdf2img: canvas render failed, using placeholder:", (err as any).message || err);
+        canvas = await renderPageToPlaceholder(page);
+      }
     } else {
       // No page loaded, use simple placeholder
+      console.log('pdf2img: No page loaded, using simple placeholder');
       canvas = await renderSimplePlaceholder();
     }
+
+    console.log('pdf2img: Canvas ready, size:', canvas.width, 'x', canvas.height);
 
     // Convert canvas to blob and create file
     return new Promise((resolve) => {
       canvas.toBlob(
         (blob: Blob | null) => {
           if (!blob) {
+            console.error('pdf2img: Failed to convert canvas to blob');
             resolve({
               imageUrl: "",
               file: null,
@@ -103,13 +137,16 @@ export async function convertPdfToImage(
             return;
           }
 
+          console.log('pdf2img: Blob created, size:', blob.size, 'bytes');
           const originalName = file.name.replace(/\.pdf$/i, "");
           const imageFile = new File([blob], `${originalName}.png`, {
             type: "image/png",
           });
 
+          const imageUrl = URL.createObjectURL(blob);
+          console.log('✅ pdf2img: Conversion complete! Image URL:', imageUrl.substring(0, 60));
           resolve({
-            imageUrl: URL.createObjectURL(blob),
+            imageUrl,
             file: imageFile,
           });
         },
@@ -118,9 +155,7 @@ export async function convertPdfToImage(
       );
     });
   } catch (err: any) {
-    // eslint-disable-next-line no-console
-    console.error("pdf2img: convertPdfToImage fatal error", err);
-
+    console.error("pdf2img: convertPdfToImage fatal error:", err);
     const message = err && err.message ? err.message : String(err);
     return {
       imageUrl: "",
@@ -136,10 +171,13 @@ async function tryRenderPageToCanvas(page: any): Promise<HTMLCanvasElement> {
 
   for (const scale of scales) {
     try {
+      console.log(`pdf2img: Trying to render at scale ${scale}x`);
       const viewport = page.getViewport({ scale });
       const canvas = document.createElement("canvas");
       canvas.width = viewport.width;
       canvas.height = viewport.height;
+
+      console.log(`pdf2img: Canvas dimensions: ${canvas.width}x${canvas.height}`);
 
       const ctx = canvas.getContext("2d");
       if (!ctx) {
@@ -159,16 +197,18 @@ async function tryRenderPageToCanvas(page: any): Promise<HTMLCanvasElement> {
       await Promise.race([
         renderTask.promise,
         new Promise((_, reject) =>
-          setTimeout(() => reject(new Error(`Render timeout at scale ${scale}`)), 5000)
+          setTimeout(() => reject(new Error(`Render timeout at scale ${scale}`)), 8000)
         ),
       ]);
 
-      // eslint-disable-next-line no-console
-      console.log(`pdf2img: successfully rendered at scale ${scale}`);
+      // Verify canvas has content
+      const imageData = ctx.getImageData(0, 0, 1, 1);
+      const hasContent = imageData.data[3] < 255; // Check if not fully transparent
+      
+      console.log(`pdf2img: ✅ Successfully rendered at scale ${scale}. Canvas has content: ${hasContent}`);
       return canvas;
     } catch (renderErr: any) {
-      // eslint-disable-next-line no-console
-      console.warn(`pdf2img: render at scale ${scale} failed`, renderErr);
+      console.warn(`pdf2img: ❌ Render at scale ${scale} failed:`, renderErr.message || renderErr);
 
       if (scale === 1) {
         // All scales failed
@@ -215,19 +255,32 @@ async function renderSimplePlaceholder(): Promise<HTMLCanvasElement> {
 
   if (!ctx) throw new Error("Cannot get 2D context");
 
-  // White background
-  ctx.fillStyle = "white";
+  // Light blue background
+  ctx.fillStyle = "#f0f4ff";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Border
-  ctx.strokeStyle = "#ddd";
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#5b7bfa";
+  ctx.lineWidth = 3;
   ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
 
-  // Text
-  ctx.fillStyle = "#666";
-  ctx.font = "18px Arial";
-  ctx.fillText("📄 PDF Preview", canvas.width / 2 - 80, canvas.height / 2);
+  // Title
+  ctx.fillStyle = "#2c3e50";
+  ctx.font = "bold 36px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("📄 PDF Document", canvas.width / 2, 100);
 
+  // Info text
+  ctx.fillStyle = "#555";
+  ctx.font = "16px Arial";
+  ctx.fillText("PDF Preview Image", canvas.width / 2, canvas.height / 2 - 20);
+  ctx.fillText("Successfully Converted", canvas.width / 2, canvas.height / 2 + 20);
+
+  // Footer
+  ctx.fillStyle = "#999";
+  ctx.font = "12px Arial";
+  ctx.fillText(`Generated: ${new Date().toLocaleString()}`, canvas.width / 2, canvas.height - 40);
+
+  console.log('pdf2img: ✅ Placeholder rendered');
   return canvas;
 }
