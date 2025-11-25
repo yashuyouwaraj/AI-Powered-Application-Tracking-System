@@ -121,6 +121,8 @@ Live App:
 * Automated tests (Jest, React Testing Library)
 * CI/CD (GitHub Actions)
 
+<img src="./public/images/ATSRESULT.png" alt="ATS Result Page">
+
 ---
 
 ## 🤝 Contributing
