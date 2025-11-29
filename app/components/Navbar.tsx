@@ -25,10 +25,10 @@ const Navbar = () => {
         RESUMIND
       </Link>
       
-      <div className='flex items-center gap-3 md:gap-6'>
+      <div className='flex items-center gap-2 md:gap-6'>
         <Link 
           to='/upload' 
-          className='btn-primary hidden md:inline-flex px-4 py-2 text-sm md:text-base'
+          className='btn-primary inline-flex px-3 md:px-4 py-2 text-xs md:text-sm'
           onMouseEnter={(e) => {
             gsap.to(e.currentTarget, { scale: 1.05, duration: 0.3, ease: 'power2.out' });
           }}
@@ -36,7 +36,7 @@ const Navbar = () => {
             gsap.to(e.currentTarget, { scale: 1, duration: 0.3, ease: 'power2.out' });
           }}
         >
-          Upload Resume
+          Upload
         </Link>
         <LogoutButton />
       </div>
