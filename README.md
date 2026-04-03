@@ -3,8 +3,8 @@
 
 # AI-Powered Application Tracking System
 
-Live Demo: [https://ats-scanner-engine.vercel.app/](https://ai-powered-application-tracking-system.onrender.com/)
-*Deployed using **Render***
+Live Demo: [https://ats-scanner-engine.vercel.app/](https://ats-scanner-engine.vercel.app/)
+*Deployed using **Vercel***
 
 ---
 
@@ -24,7 +24,7 @@ The UI is enhanced with smooth animations, clean design, and a fast development 
 * Fully typed with **TypeScript**
 * Lightning-fast builds and dev server using **Vite**
 * Clean and structured code for long-term scalability
-* Hosted and deployed via **Render**
+* Hosted and deployed via **Vercel**
 
 ---
 
@@ -84,11 +84,11 @@ README.md
 
 ## 🌐 Deployment
 
-This project is deployed using **Render**.
-Render automatically builds and serves both client and server bundles (React Router SSR).
+This project is deployed using **Vercel**.
+Vercel automatically builds and serves both client and server bundles (React Router SSR).
 
 Live App:
-[https://ai-powered-application-tracking-system.onrender.com/](https://ai-powered-application-tracking-system.onrender.com/)
+[https://ats-scanner-engine.vercel.app/](https://ats-scanner-engine.vercel.app/)
 
 ---
 
