@@ -3,7 +3,7 @@
 
 # AI-Powered Application Tracking System
 
-Live Demo: [https://ai-powered-application-tracking-system.onrender.com/](https://ai-powered-application-tracking-system.onrender.com/)
+Live Demo: [https://ats-scanner-engine.vercel.app/](https://ai-powered-application-tracking-system.onrender.com/)
 *Deployed using **Render***
 
 ---
